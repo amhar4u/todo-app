@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/Add_todo.dart';
+import 'package:todo_app/TaskList.dart';
+import 'package:todo_app/task_database.dart';
 
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
+  // Initialize the TaskDatabase
+  final database = TaskDatabase.instance;
+  await database.initialize();
 
-void main()  {
   runApp(MyApp());
 }
 
@@ -22,121 +28,86 @@ class MyHome extends StatefulWidget {
 }
 
 class _MyHomeState extends State<MyHome> {
-  bool isSearching = false;
-  int _currrentIndex = 0;
-
-  // Define the pages for each tab
-  final List<Widget> _pages = [
-    // Replace these with your pages
-    Center(
-      child: Text('Home Page'),
-    ),
-    Center(
-      child: Text('Favorites Page'),
-    ),
-    Center(
-      child: Text('Profile Page'),
-    ),
-  ];
+  int _currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: isSearching
-            ? Container(
-            width: 300.0,
-            margin: EdgeInsets.only(left: 25.0),
-            child: Row(children: [
-              Icon(
-                Icons.search,
-                color: Colors.white,
-              ),
-              SizedBox(width: 12.0),
-              Expanded(
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Search...',
-                    hintStyle: TextStyle(color: Colors.white),
-                    border: InputBorder.none,
-                  ),
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20.0,
-                  ),
-                ),
-              )
-            ]))
-            : Text(
+        title: Text(
           'ToDo App',
           style: TextStyle(
             color: Colors.white,
           ),
         ),
         backgroundColor: Colors.redAccent,
-        actions: [
-          isSearching
-              ? Container(
-              margin: EdgeInsets.only(right: 25.0),
-              child: IconButton(
-                icon: Icon(Icons.close),
-                onPressed: () {
-                  setState(() {
-                    isSearching = false;
-                  });
-                },
-              ))
-              : IconButton(
-            icon: Icon(Icons.search),
-            onPressed: () {
-              setState(() {
-                isSearching = true;
-              });
-            },
-          ),
-        ],
       ),
-      body: _pages[_currrentIndex],
+      body: Container(
+        margin: EdgeInsets.all(16.0), // Adjust the margin as needed
+        child: _currentIndex == 0
+            ? TaskList(reloadTasks: reloadTasks)
+            : _currentIndex == 1
+            ? Center(
+          child: Text('Category Page'),
+        )
+            : Center(
+          child: Text('Details Page'),
+        ),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.redAccent,
         selectedItemColor: Colors.black,
         unselectedItemColor: Colors.white,
-        currentIndex: _currrentIndex,
+        currentIndex: _currentIndex,
         onTap: (index) {
           setState(() {
-            _currrentIndex = index;
+            _currentIndex = index;
           });
         },
         items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home,
-              color: _currrentIndex == 0 ? Colors.black : Colors.white,),
+            icon: Icon(
+              Icons.home,
+              color: _currentIndex == 0 ? Colors.black : Colors.white,
+            ),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.favorite,
-              color: _currrentIndex == 1 ? Colors.black : Colors.white,),
-            label: 'Favorites',
+            icon: Icon(
+              Icons.category,
+              color: _currentIndex == 1 ? Colors.black : Colors.white,
+            ),
+            label: 'Category',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person,
-              color: _currrentIndex == 2 ? Colors.black : Colors.white,),
-            label: 'Profile',
+            icon: Icon(
+              Icons.details,
+              color: _currentIndex == 2 ? Colors.black : Colors.white,
+            ),
+            label: 'Details',
           ),
         ],
       ),
-      floatingActionButton: _currrentIndex == 0
-          ? FloatingActionButton(
+      floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context)=>NewTask())
-          );
+            context,
+            MaterialPageRoute(
+              builder: (context) => NewTask(),
+            ),
+          ).then((_) {
+            // When the NewTask screen is dismissed, reload tasks
+            reloadTasks();
+          });
         },
         child: Icon(Icons.add),
         backgroundColor: Colors.redAccent,
-      )
-          : null,
+      ),
     );
+  }
+
+
+  void reloadTasks() {
+    setState(() {}); // Trigger a rebuild of the widget
   }
 }
