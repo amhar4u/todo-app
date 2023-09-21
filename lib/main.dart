@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:todo_app/Add_todo.dart';
 import 'package:todo_app/TaskList.dart';
 import 'package:todo_app/task_database.dart';
+import 'package:todo_app/category.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,13 +44,11 @@ class _MyHomeState extends State<MyHome> {
         backgroundColor: Colors.redAccent,
       ),
       body: Container(
-        margin: EdgeInsets.all(16.0), // Adjust the margin as needed
+        margin: EdgeInsets.all(16.0),
         child: _currentIndex == 0
             ? TaskList(reloadTasks: reloadTasks)
             : _currentIndex == 1
-            ? Center(
-          child: Text('Category Page'),
-        )
+            ? CategoryPage() // Navigate to CategoryPage when "Category" tab is selected
             : Center(
           child: Text('Details Page'),
         ),
@@ -105,7 +104,6 @@ class _MyHomeState extends State<MyHome> {
       ),
     );
   }
-
 
   void reloadTasks() {
     setState(() {}); // Trigger a rebuild of the widget

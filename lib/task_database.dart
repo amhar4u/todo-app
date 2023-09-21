@@ -84,4 +84,25 @@ class TaskDatabase {
      }
      await _database.update(table,updatedValue,where:'id=?',whereArgs: [index],);
    }
+
+  Future<int?> getCountEducational() async {
+    String query = 'SELECT COUNT(*) FROM $table WHERE category="Educational"';
+    List<Map<String, dynamic>> result = await _database.rawQuery(query);
+    int? count = Sqflite.firstIntValue(result);
+    return count;
+  }
+  Future<int?> getCountPersonal() async {
+    String query = 'SELECT COUNT(*) FROM $table WHERE category="Personal"';
+    List<Map<String, dynamic>> result = await _database.rawQuery(query);
+    int? count = Sqflite.firstIntValue(result);
+    return count;
+  }
+  Future<int?> getCountShopping() async {
+    String query = 'SELECT COUNT(*) FROM $table WHERE category="Shopping"';
+    List<Map<String, dynamic>> result = await _database.rawQuery(query);
+    int? count = Sqflite.firstIntValue(result);
+    return count;
+  }
+
+
 }
