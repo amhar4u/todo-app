@@ -28,7 +28,7 @@ class _TaskListState extends State<TaskList> {
           // Filter tasks to include only those with status "pending"
 
           if (tasks.isEmpty) {
-            return Center(child: Text('No pending tasks available.'));
+            return Center(child: Text('Tasks Are Completed'));
           }
 
           return ListView.builder(

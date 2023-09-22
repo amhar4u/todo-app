@@ -3,6 +3,11 @@ import 'package:todo_app/task_database.dart';
 import 'TaskClass.dart';
 
 class NewTask extends StatefulWidget {
+  final Function() reloadCategoryPage;
+  final Function() reloadCategoryCounts; // Define the callback
+
+  NewTask({Key? key, required this.reloadCategoryPage, required this.reloadCategoryCounts}) : super(key: key);
+
   @override
   _NewTaskState createState() => _NewTaskState();
 }
@@ -241,8 +246,7 @@ class _NewTaskState extends State<NewTask> {
                         status: 'pending',
                       );
 
-                      final insertedId =
-                      await TaskDatabase.instance.insertTask(newTask);
+                      final insertedId = await TaskDatabase.instance.insertTask(newTask);
 
                       newTask.id = insertedId;
                       taskTitleController.clear();
@@ -250,6 +254,9 @@ class _NewTaskState extends State<NewTask> {
                       descriptionController.clear();
 
                       Navigator.pop(context, newTask);
+
+                      // Call the callback function to reload the CategoryPage
+                      widget.reloadCategoryPage();
                     }
                   },
                   style: ElevatedButton.styleFrom(
